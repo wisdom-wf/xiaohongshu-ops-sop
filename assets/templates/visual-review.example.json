@@ -1,0 +1,43 @@
+{
+  "title": "填写与 title.txt 完全一致的标题",
+  "page_count": 0,
+  "page_images": [
+    "images/01.png"
+  ],
+  "canvas": {
+    "width": 1080,
+    "height": 1440
+  },
+  "preview_width_px": 270,
+  "preview_reviewed": false,
+  "contact_sheet_reviewed": false,
+  "cover_promise_sentence": "",
+  "first_read": {
+    "audience": "",
+    "scenario": "",
+    "action": "",
+    "outcome": ""
+  },
+  "typography": {
+    "key_text_px": 0,
+    "support_text_px": 0,
+    "source_text_px": 0,
+    "normal_contrast_ratio": 0,
+    "large_contrast_ratio": 0
+  },
+  "numeric_claims": [],
+  "checks": {
+    "V01": false,
+    "V02": false,
+    "V03": false,
+    "V04": false,
+    "V05": false,
+    "V06": false,
+    "V07": false,
+    "V08": false,
+    "V09": false,
+    "V10": false
+  },
+  "reviewer_notes": "",
+  "decision": "fail"
+}

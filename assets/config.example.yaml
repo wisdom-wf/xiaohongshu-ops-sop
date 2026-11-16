@@ -1,0 +1,308 @@
+# 小红书账号运营配置模板
+# 由 init_workspace.py 复制到工作区根目录，命名为 xiaohongshu-ops.yaml。
+# 所有数字都是实战默认值（上限/窗口/比例），按你的账号数据调整；
+# 带 __占位符__ 的字段必须替换成你自己的账号信息。
+schema_version: 1
+
+account:
+  name: "__ACCOUNT_NAME__"
+  # 本账号 userId（可选但建议填）：外联关注回扫时用来排除「自己关注自己」。
+  user_id: "__USER_ID__"
+  # 一句话定位：帮谁、解决什么问题。示例：给普通家庭的办事、防坑清单。
+  positioning: "__ACCOUNT_POSITIONING__"
+  primary_goal: "profile_visits_and_follows"
+  timezone: "Asia/Shanghai"
+  audience:
+    - "__目标人群1__"
+    - "__目标人群2__"
+  profile_promise: "__主页承诺：每条内容给读者什么__"
+
+automation:
+  # 默认只做人工或当前任务触发。创建/恢复定时任务必须由用户另行明确授权。
+  mode: "manual_only"
+  create_or_resume_requires_explicit_approval: true
+
+content:
+  # 涉及地方标准时的默认地域口径（可选）：未写地域时按此口径，并在画面/正文标注。
+  # default_region: "__你的城市__"
+  daily_max_notes: 2
+  # 1+1 是每日发布位上限，不是必须发满两条的 KPI；允许少发或 0 条。
+  daily_mix_ceiling:
+    video: 1
+    image: 1
+  # 内容支柱与配比（示例，按账号定位修改；ratio 合计应为 1.0）。
+  pillars:
+    - name: "__支柱1：核心垂类__"
+      ratio: 0.65
+    - name: "__支柱2：相邻需求__"
+      ratio: 0.20
+    - name: "__支柱3：场景延伸__"
+      ratio: 0.10
+    - name: "窄人群试验"
+      ratio: 0.05
+  video:
+    duration_seconds: [45, 60]
+    info_points: [6, 8]
+    require_gap_hook: true
+    require_stance: true
+    require_share_target: true
+    require_source_card: true
+  image:
+    cards_target: [6, 8]
+    cards_hard_max: 10
+    require_source_page: true
+    visual_gate:
+      required: true
+      review_file: "visual-review.json"
+      preview_width_px: 270
+      canvas: [1080, 1440]
+      min_key_text_px: 38
+      min_support_text_px: 30
+      min_source_text_px: 26
+      min_normal_contrast_ratio: 4.5
+      min_large_contrast_ratio: 3.0
+      required_checks: [V01, V02, V03, V04, V05, V06, V07, V08, V09, V10]
+    require_save_summary: true
+  title:
+    max_chars: 20
+    first_chars_priority: 6
+    formula_priority: ["S", "A", "B"]
+    banned_openings:
+      - "了解一下"
+      - "须知"
+      - "解读"
+      - "盘点"
+      - "干货"
+      - "到底"
+      - "为什么"
+
+publishing:
+  # 发布窗口（示例默认：图文早高峰前、视频晚高峰）。按账号实测数据调整。
+  image_windows:
+    - "07:30-08:30"
+  video_windows:
+    - "19:15-20:15"
+  min_gap_hours: 8
+  same_day_duplicate_topic: false
+  repeat_window_days: 7
+  randomize_minute: true
+  schedule_lock_required: true
+  missed_slot_policy: "skip_no_backfill"
+  verify_today_note_count: true
+  verify_after_publish: true
+
+analytics:
+  # 全量口径：所有已发布笔记一起纳入，不按手动/计划外/窗口外/特殊时长隔离。
+  cohort: all_published
+  checkpoints_hours: [24, 72]
+  # 目标值（示例基线，按账号阶段调整）。
+  targets:
+    daily_views: 3000
+    single_note_views: 5000
+    daily_follows: 8
+    daily_profile_visits: 80
+    video_cover_ctr: 0.04
+    image_cover_ctr: 0.06
+    video_completion_rate: 0.08
+    collect_rate: 0.03
+    share_rate: 0.005
+    comments_per_note: 2
+    follows_per_100_views: 0.8
+    profile_visits_per_100_views: 3.0
+
+engagement:
+  direct_messages:
+    mode: "read_only"
+    auto_reply: false
+    manual_approval_required: true
+    max_sends_per_run: 3
+  own_comments:
+    first_comment_minutes: 30
+    reply_within_hours: 2
+    # 不设固定轮询；有新评论事件或当前任务触发时再处理，不据此创建定时任务。
+    regular_checks: []
+    max_replies_per_run: 5
+    max_first_comments_per_run: 2
+    historical_zero_comment_backfill: false
+    question_policy: "optional_max_one"
+  outreach:
+    # 30 是每日计划上限，不是必须刷满的 KPI；允许少做或 0 条。
+    daily_total: 30
+    daily_total_basis: "planned_ceiling"
+    planned_target_only: true
+    pools:
+      same_topic: 15
+      viral: 15
+    same_topic:
+      recency_hours: 72
+      min_existing_comments: 1
+      reject_zero_comment: true
+      prefer_keyword_plus_region: true
+      # 地域词：换成你的城市/省份/区县，本地讨论比泛流量帖更有同频感。
+      region_terms:
+        - "__你的城市__"
+        - "__你的省份__"
+      # 搜索词：围绕内容支柱组合「垂类词 + 场景词」，不要只搜一个词。
+      search_queries:
+        - "__垂类词1 场景词__"
+        - "__垂类词2 人群词__"
+        - "__垂类词3 办事/防坑词__"
+      selection_note: "优先近期、评论区有真实讨论、内容质量高的同主题笔记。"
+    viral:
+      # 爆款新鲜度：默认 72h；合格候选不足时可放宽到 168h（7 天），不降质。
+      freshness_hours: 72
+      min_likes: 1000
+      selection_note: "优先流量大且评论区仍活跃、评论不会被完全淹没的热门内容。"
+    scheduling:
+      # 晚间是多数账号的流量高峰：窗口拆成同日多段 + 高峰优先。
+      # 运营日按自然日归属，不用跨日窗口（如 09:30-02:00），避免配额被劈成两天。
+      # 晚间场允许跨零点连续执行，跨零点留言计入新一天配额，不算补量。
+      active_windows: ["00:00-02:00", "09:30-24:00"]
+      peak_windows: ["00:00-02:00", "18:00-24:00"]
+      peak_share: 0.6
+      quiet_window: "02:00-09:30"
+      night_session_policy: "allow_peak_continuation"
+      min_gap_minutes: 10
+      max_per_rolling_60m: 3
+      max_success_per_round: 2
+      batch_open_candidates: [3, 5]
+      alternate_pools: true
+      randomize: true
+      off_window_policy: "skip_no_backfill"
+    tone:
+      # 每条留言汉字数硬上限（只计汉字，标点不计）。
+      max_chars: 30
+      recommended_chars: [10, 30]
+      max_sentences: 2
+      question_ratio_target:
+        same_topic: 0.20
+        viral: 0.13
+      question_ratio_total_max: 0.167
+      question_max:
+        total: 5
+        same_topic: 3
+        viral: 2
+      praise_required: true
+      same_frequency_required: true
+      question_last_when_used: true
+      no_profile_cta: true
+      no_external_links: true
+      no_contact_info: true
+      # 轻夸模式（可选）：刷到日常/生活向内容、没有具体细节可接时，
+      # 允许一句 ≤15 字短夸；只夸状态/气质/善意，不评价身材长相、不越界、不编细节。
+      light_praise:
+        enabled: false
+        max_chars: 15
+        max_sentences: 1
+        no_question: true
+        max_per_day: 10
+        consecutive_limit: 1
+        examples:
+          - "状态真好，看着舒服"
+          - "好有生活气息"
+        notes: "不得全部用轻夸凑量；同一句与同作者 7 天冷却照常生效。"
+      # AI 身份追问应对（可选）：被问「你是不是 AI/机器人」时大方承认，
+      # 不否认、不装真人，然后回一句自定义话术；仅用于被追问场景，不主动使用。
+      ai_admission:
+        enabled: true
+        policy: admit_openly
+        reply_text: "__被追问AI身份时的固定回应，一句短话__"
+    # 点赞感谢私信（可选）：只给「给我笔记点过赞」的用户发（平台不暴露收藏者名单）。
+    # 话术去营销化：不推销、不导流、不问需求；每条发送前逐条给用户确认。
+    dm_thanks:
+      enabled: false
+      target: note_likers
+      max_per_day: 3
+      manual_approval_required: true
+      min_gap_minutes: 30
+      max_sends_per_run: 2
+      no_marketing: true
+      template_pool:
+        - "谢谢支持，这条的补充清单我更新在评论区置顶了"
+        - "谢谢喜欢，这类问题我每周都会更新一篇，可以常来"
+        - "谢谢认可，有具体疑问欢迎在评论区留言，我看到就回"
+      cooldown:
+        same_author_days: 30
+    cooldown:
+      same_author_days: 7
+      same_phrase_days: 7
+      same_opening_days: 7
+    # 关注回扫（可选）：每轮留言成功后把博主排进队列，
+    # 下一轮开头先回到那条笔记进作者主页关注，再做本轮留言。
+    # 关注是对外可见动作，比留言更敏感，所有限制都比留言更严；须当前任务明确授权。
+    follow_back:
+      enabled: false
+      daily_max: 10            # 每日关注上限；同时不得超过近 24h 成功留言数
+      max_per_round: 2
+      min_gap_minutes: 10
+      max_age_hours: 24        # 留言超过 24h 不再回扫，只补上一轮，不翻旧账
+      skip_self: true
+      verify_previous_comment: true
+      on_risk_signal: stop     # 操作频繁/验证码/登录失效 → 停止当天全部关注
+
+compliance:
+  # 广告法极限词按「精确含义」拦截：不要放「第一」这类泛词，
+  # 正文大量用「第一件事/第一次」作序数，照抄极限词表会误杀正常表述。
+  banned_terms:
+    - "最好"
+    - "最佳"
+    - "最优"
+    - "100%"
+    - "保证"
+    - "包过"
+    - "永久"
+    - "必领"
+    - "0成本"
+    - "国家级"
+    - "唯一"
+    - "顶级"
+    - "极品"
+    - "全网最低"
+    - "史无前例"
+    - "万无一失"
+    - "根治"
+    - "药到病除"
+  banned_patterns:
+    - "https?://"
+    - "www[.]"
+    - "微信|VX|vx|QQ"
+    - "加我|私信我|关注我|互关|扫码|二维码"
+    - "全网?第一|全国第一|行业第一|排名第一"
+  # 站外平台/具体线上渠道名称（可选）：命中后统一替换为「官网入口」等中性表述。
+  # 按你的垂类补充，例如各类政务 App、支付工具、小程序、公众号名称。
+  # off_platform_names:
+  #   - "__其他平台或渠道名称正则__"
+  # off_platform_policy: replace_with_official_site_entry
+  # off_platform_replacement: 官网入口
+  high_risk_domains:
+    - "medical"
+    - "legal"
+    - "finance"
+    - "policy"
+  source_required_for_numbers: true
+
+browser:
+  # 适配器不绑定具体工具：任何支持标签页/快照/点击/输入/上传的浏览器 MCP 均可。
+  adapter: "__your-browser-adapter__"
+  tab_lifecycle:
+    required: true
+    close_on_success: true
+    close_on_error_or_stop: true
+    preserve_unowned_tabs: true
+    max_residual_task_tabs: 0
+    max_candidate_tabs: 5
+    label_prefix_format: "XHS-<task>-<YYYYMMDD-HHMMSS>-<seq>"
+  require_explicit_tab_id: true
+  healthy_call_timeout_seconds: 20
+  upload_timeout_seconds: 180
+  stop_on:
+    - "captcha"
+    - "rate_limit"
+    - "login_required"
+    - "risk_control"
+    - "repeated_submit_failure"
+
+workspace:
+  reports_dir: "data/reports"
+  logs_dir: "data/logs"
+  outreach_ledger: "data/outreach.jsonl"
